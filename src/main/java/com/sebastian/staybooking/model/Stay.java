@@ -1,5 +1,6 @@
 package com.sebastian.staybooking.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public class Stay implements Serializable {
     @JoinColumn(name = "user_id")
     private User host;
     @OneToMany(mappedBy = "stay", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<StayAvailability> availabilities;
 
     @OneToMany(mappedBy = "stay", cascade = CascadeType.ALL, fetch=FetchType.EAGER)

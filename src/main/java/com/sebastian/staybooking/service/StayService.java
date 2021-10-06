@@ -1,6 +1,9 @@
 package com.sebastian.staybooking.service;
 
+import com.sebastian.staybooking.exception.StayDeleteException;
 import com.sebastian.staybooking.model.*;
+import com.sebastian.staybooking.repository.LocationRepository;
+import com.sebastian.staybooking.repository.ReservationRepository;
 import com.sebastian.staybooking.repository.StayRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,15 +18,21 @@ import java.util.stream.Collectors;
 @Service
 public class StayService {
     private StayRepository stayRepository;
+    private LocationRepository locationRepository;
+    private ReservationRepository reservationRepository;
     private ImageStorageService imageStorageService;
+    private GeoEncodingService geoEncodingService;
 
     @Autowired
-    public StayService(StayRepository stayRepository, ImageStorageService imageStorageService) {
+    public StayService(StayRepository stayRepository, LocationRepository locationRepository, ReservationRepository reservationRepository, ImageStorageService imageStorageService, GeoEncodingService geoEncodingService) {
         this.stayRepository = stayRepository;
+        this.locationRepository = locationRepository;
+        this.reservationRepository = reservationRepository;
         this.imageStorageService = imageStorageService;
+        this.geoEncodingService = geoEncodingService;
     }
 
-    public List<Stay> findByHost(String username) {
+    public List<Stay> listByUser(String username) {
         return stayRepository.findByHost(new User.Builder().setUsername(username).build());
     }
 
@@ -31,10 +40,16 @@ public class StayService {
         return stayRepository.findById(stayId).orElse(null);
     }
 
-    public void delete(Long stayId) {
-        stayRepository.deleteById(stayId);
-    }
+//    public void delete(Long stayId) {
+//        stayRepository.deleteById(stayId);
+//    }
 
+    public void delete(Long stayId) throws StayDeleteException {
+        List<Reservation> reservations = reservationRepository.findByStayAndCheckoutDateAfter(new Stay.Builder().setId(stayId).build(), LocalDate.now());
+        if (reservations != null && reservations.size() > 0) {
+            throw new StayDeleteException("Cannot delete stay with active reservation");
+        }
+    }
     public void add(Stay stay, MultipartFile[] images) {
         LocalDate date = LocalDate.now().plusDays(1);
         List<StayAvailability> availabilities = new ArrayList<>();
@@ -52,5 +67,7 @@ public class StayService {
         stay.setImages(stayImages);
 
         stayRepository.save(stay);
+        Location location = geoEncodingService.getLatLng(stay.getId(), stay.getAddress());
+        locationRepository.save(location);
     }
 }

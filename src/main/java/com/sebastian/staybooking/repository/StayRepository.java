@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface StayRepository extends JpaRepository <Stay, Long>{
     List<Stay> findByHost(User user);
+    List<Stay> findByIdInAndGuestNumberGreaterThanEqual(List<Long> ids, int guestNumber);
 }
 // 为什么要继承 JpaRepository？
 // 继承后就有了一些操作数据库的基本方法

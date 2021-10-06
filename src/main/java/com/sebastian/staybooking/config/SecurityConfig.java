@@ -35,12 +35,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/register/*").permitAll()
                 .antMatchers(HttpMethod.POST, "/authenticate/*").permitAll()
-                .antMatchers("/stays").permitAll()
-                .antMatchers("/stays/*").permitAll()
+                .antMatchers("/stays").hasAuthority("ROLE_HOST")
+                .antMatchers("/stays/*").hasAuthority("ROLE_HOST")
+                .antMatchers("/search").hasAuthority("ROLE_GUEST")
+                .antMatchers("/reservations").hasAuthority("ROLE_GUEST")
                 .anyRequest().authenticated()
                 .and()
                 .csrf()
                 .disable();
+
+        http
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
