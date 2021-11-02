@@ -45,10 +45,11 @@ public class StayService {
 //    }
 
     public void delete(Long stayId) throws StayDeleteException {
-        List<Reservation> reservations = reservationRepository.findByStayAndCheckoutDateAfter(new Stay.Builder().setId(stayId).build(), LocalDate.now());
-        if (reservations != null && reservations.size() > 0) {
-            throw new StayDeleteException("Cannot delete stay with active reservation");
-        }
+//        List<Reservation> reservations = reservationRepository.findByStayAndCheckoutDateAfter(new Stay.Builder().setId(stayId).build(), LocalDate.now());
+//        if (reservations != null && reservations.size() > 0) {
+//            throw new StayDeleteException("Cannot delete stay with active reservation");
+//        }
+        stayRepository.deleteById(stayId);
     }
     public void add(Stay stay, MultipartFile[] images) {
         LocalDate date = LocalDate.now().plusDays(1);
