@@ -1,4 +1,4 @@
-package com.sebastian.staybooking.controlloer;
+package com.sebastian.staybooking.controller;
 
 import com.sebastian.staybooking.model.Token;
 import com.sebastian.staybooking.model.User;

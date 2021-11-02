@@ -1,4 +1,4 @@
-package com.sebastian.staybooking.controlloer;
+package com.sebastian.staybooking.controller;
 
 import com.sebastian.staybooking.exception.InvalidReservationDateException;
 import com.sebastian.staybooking.model.Reservation;
@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
 public class ReservationController {
     private ReservationService reservationService;
+
 
     @Autowired
     public ReservationController(ReservationService reservationService) {

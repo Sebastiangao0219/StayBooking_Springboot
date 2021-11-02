@@ -1,4 +1,4 @@
-package com.sebastian.staybooking.controlloer;
+package com.sebastian.staybooking.controller;
 
 import com.sebastian.staybooking.exception.*;
 import org.springframework.http.HttpStatus;
